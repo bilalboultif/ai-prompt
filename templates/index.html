@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI Text Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generative AI Text Generator</h1>
+    <form id="generateForm">
+        <label for="prompt">Enter your prompt:</label><br>
+        <textarea id="prompt" name="prompt" placeholder="Write a story about an adventurous journey..." required></textarea><br>
+        <button type="submit">Generate Text</button>
+    </form>
+    <div id="response">
+        <p><strong>Generated Text:</strong></p>
+        <p id="generatedText"></p>
+    </div>
+
+    <script>
+        document.getElementById('generateForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            let prompt = document.getElementById('prompt').value;
+            let responseDiv = document.getElementById('generatedText');
+            
+            try {
+                let response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                let data = await response.json();
+                responseDiv.textContent = data.response;
+            } catch (error) {
+                console.error('Error:', error);
+                responseDiv.textContent = 'Error fetching data. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
